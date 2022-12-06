@@ -1,0 +1,50 @@
+version: '3.6'
+
+services:
+  web:
+    build: .
+    command: gunicorn fitbit.wsgi --log-file=-
+    container_name: ${APP_NAME}-web
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    image: ${APP_NAME}-web
+    ports:
+      - 127.0.0.1:7000:7000
+    restart: "no"
+    volumes:
+      - .:/app:delegated
+
+  worker:
+    build: .
+    command: celery worker -A datauploader --concurrency 1
+    container_name: ${APP_NAME}-worker
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    image: ${APP_NAME}-web
+    restart: "no"
+    volumes:
+      - .:/app:delegated
+
+  db:
+    container_name: ${APP_NAME}-db
+    environment:
+      POSTGRES_DB: ${APP_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /postgres/data
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - data:/var/lib/postgresql
+
+  redis:
+    container_name: ${APP_NAME}-redis
+    image: redis:7-alpine
+
+volumes:
+  data:
+    driver: local
