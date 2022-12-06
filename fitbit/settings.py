@@ -60,20 +60,19 @@ OH_DELETE_FILES = OH_API_BASE + '/project/files/delete/'
 FITBIT_CLIENT_ID=os.getenv('FITBIT_CLIENT_ID')
 FITBIT_CLIENT_SECRET=os.getenv('FITBIT_CLIENT_SECRET')
 
-if REMOTE is True:
-    from urllib.parse import urlparse
-    url_object = urlparse(os.getenv('REDIS_URL'))
-    logger.info('Connecting to redis at %s:%s',
-        url_object.hostname,
-        url_object.port)
-    RespectfulRequester.configure(
-        redis={
-            "host": url_object.hostname,
-            "port": url_object.port,
-            "password": url_object.password,
-            "database": 0
-        },
-        safety_threshold=5)
+from urllib.parse import urlparse
+url_object = urlparse(os.getenv('REDIS_URL'))
+logger.info('Connecting to redis at %s:%s',
+    url_object.hostname,
+    url_object.port)
+RespectfulRequester.configure(
+    redis={
+        "host": url_object.hostname,
+        "port": url_object.port,
+        "password": url_object.password,
+        "database": 0
+    },
+    safety_threshold=5)
 
 # Requests Respectful (rate limiting, waiting)
 rr = RespectfulRequester()

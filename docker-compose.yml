@@ -11,20 +11,20 @@ services:
     env_file: .env
     image: ${APP_NAME}-web
     ports:
-      - 127.0.0.1:7000:7000
+      - 127.0.0.1:5000:5000
     restart: "no"
     volumes:
       - .:/app:delegated
 
   worker:
     build: .
-    command: celery worker -A datauploader --concurrency 1
+    command: celery -A datauploader worker --concurrency 1
     container_name: ${APP_NAME}-worker
     depends_on:
       - db
       - redis
     env_file: .env
-    image: ${APP_NAME}-web
+    image: ${APP_NAME}-worker
     restart: "no"
     volumes:
       - .:/app:delegated
@@ -37,13 +37,14 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: /postgres/data
     image: postgres:latest
-    restart: unless-stopped
+    restart: "no"
     volumes:
       - data:/var/lib/postgresql
 
   redis:
     container_name: ${APP_NAME}-redis
     image: redis:7-alpine
+    restart: "no"
 
 volumes:
   data:
