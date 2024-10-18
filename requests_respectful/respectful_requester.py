@@ -132,7 +132,7 @@ class RespectfulRequester:
                 port=config["redis"]["port"],
                 password=config["redis"]["password"],
                 db=config["redis"]["database"],
-                ssl_cert_reqs="required"
+                ssl_cert_reqs="none"
             )
 
         if "safety_threshold" in kwargs:
