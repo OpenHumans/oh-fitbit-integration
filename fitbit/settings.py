@@ -62,7 +62,12 @@ FITBIT_CLIENT_SECRET=os.getenv('FITBIT_CLIENT_SECRET')
 
 if REMOTE is True:
     from urllib.parse import urlparse
-    url_object = urlparse(os.getenv('REDIS_URL'))
+    redis_url = os.getenv("REDIS_URL", "redis://")
+    if redis_url.startswith("rediss://"):
+        redis_url += "?ssl_cert_reqs=required"
+    
+    url_object = urlparse(redis_url)
+    
     logger.info('Connecting to redis at %s:%s',
         url_object.hostname,
         url_object.port)
