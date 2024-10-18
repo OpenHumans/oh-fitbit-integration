@@ -22,7 +22,7 @@ from django.conf import settings
 redis_url = os.getenv("REDIS_URL", "redis://")
 
 if redis_url.startswith("rediss://"):
-    redis_url += "?ssl_cert_reqs=required"
+    redis_url += "?ssl_cert_reqs=none"
 
 CELERY_BROKER_URL = redis_url
 
