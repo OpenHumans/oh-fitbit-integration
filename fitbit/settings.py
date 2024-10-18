@@ -64,7 +64,7 @@ if REMOTE is True:
     from urllib.parse import urlparse
     redis_url = os.getenv("REDIS_URL", "redis://")
     if redis_url.startswith("rediss://"):
-        redis_url += "?ssl_cert_reqs=required"
+        redis_url += "?ssl_cert_reqs=none"
     
     url_object = urlparse(redis_url)
     
