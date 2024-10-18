@@ -69,5 +69,6 @@ redis = StrictRedis(
     host=config["redis"]["host"],
     port=config["redis"]["port"],
     password=config["redis"]["password"],
-    db=config["redis"]["database"]
+    db=config["redis"]["database"],
+    ssl_cert_reqs="required"
 )
