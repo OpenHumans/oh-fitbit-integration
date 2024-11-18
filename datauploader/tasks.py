@@ -15,11 +15,9 @@ from celery import shared_task
 from django.conf import settings
 from open_humans.models import OpenHumansMember
 from datetime import datetime
-from fitbit.settings import rr
 from main.models import FitbitMember
 from ohapi import api
-from requests_respectful import (RespectfulRequester,
-                                 RequestsRespectfulRateLimitedError)
+import time
 
 # Set up logging.
 logger = logging.getLogger(__name__)
@@ -131,12 +129,6 @@ def fetch_fitbit_data(fitbit_member_id, access_token):
     # Get existing data as currently stored on OH
     fitbit_data = get_existing_fitbit(oh_access_token, fitbit_urls)
 
-    # Set up user realm since rate limiting is per-user
-    print(fitbit_member.user)
-    user_realm = 'fitbit-{}'.format(fitbit_member.user.oh_id)
-    rr.register_realm(user_realm, max_requests=150, timespan=3600)
-    rr.update_realm(user_realm, max_requests=150, timespan=3600)
-
     # Get initial information about user from Fitbit
     print("Creating header and going to get user profile")
     headers = {'Authorization': "Bearer %s" % fitbit_access_token}
@@ -200,10 +192,10 @@ def fetch_fitbit_data(fitbit_member_id, access_token):
             final_url = fitbit_api_base_url + url['url'].format(user_id=user_id)
             # Fetch the data
             print(final_url)
-            r = rr.get(url=final_url,
+            r = requests.get(url=final_url,
                     headers=headers,
-                    realms=["Fitbit", 'fitbit-{}'.format(fitbit_member.user.oh_id)])
-            print(r.text)
+                    )
+            time.sleep(25)
 
             # print(fitbit_data)
             fitbit_data[url['name']] = r.json()
@@ -240,9 +232,9 @@ def fetch_fitbit_data(fitbit_member_id, access_token):
                                                                     end_date=year_date.ceil('year').format('YYYY-MM-DD'))
                 # Fetch the data
                 print(final_url)
-                r = rr.get(url=final_url,
-                        headers=headers,
-                        realms=["Fitbit", 'fitbit-{}'.format(fitbit_member.user.oh_id)])
+                r = requests.get(url=final_url,
+                        headers=headers
+                        )
 
                 # print([url['name']]['blah'])
                 # print([str(year)])
