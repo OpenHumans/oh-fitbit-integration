@@ -15,7 +15,6 @@ from celery import shared_task
 from django.conf import settings
 from open_humans.models import OpenHumansMember
 from datetime import datetime
-from fitbit.settings import rr
 from main.models import FitbitMember
 from ohapi import api
 import time
