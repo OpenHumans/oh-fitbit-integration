@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import dj_database_url
 import logging
-from requests_respectful import RespectfulRequester
 
 logger = logging.getLogger(__name__)
 
@@ -79,10 +78,6 @@ if REMOTE is True:
             "database": 0
         },
         safety_threshold=5)
-
-# Requests Respectful (rate limiting, waiting)
-rr = RespectfulRequester()
-rr.register_realm("Fitbit", max_requests=3600, timespan=3600)
 
 if REMOTE is False:
     FITBIT_CALLBACK_URL = 'http://127.0.0.1:5000/complete/fitbit'
